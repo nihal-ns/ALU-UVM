@@ -1,4 +1,5 @@
 `include "defines.sv"
+typedef enum { SINGLE_CYCLE, SPLIT_OPA_FIRST, SPLIT_OPB_FIRST, SPLIT_TIMEOUT } op_delivery_e;
 
 class alu_seq_item extends uvm_sequence_item;
 	rand logic [`WIDTH-1:0] OPA;
@@ -9,6 +10,8 @@ class alu_seq_item extends uvm_sequence_item;
 
 	logic OFLOW, COUT, E, G, L, ERR;  // change it to logic to include x and z conditions
 	logic [`WIDTH:0] RES;
+	bit SCB_RST;  // this reset signal is meant for reference model
+	rand op_delivery_e op_delivery;
 
 	`uvm_object_utils_begin(alu_seq_item)
 	// input 
@@ -27,19 +30,13 @@ class alu_seq_item extends uvm_sequence_item;
 		`uvm_field_int(L,UVM_ALL_ON)
 		`uvm_field_int(ERR,UVM_ALL_ON)
 		`uvm_field_int(RES,UVM_ALL_ON)
+	// addition signals for delay and reset control
+		`uvm_field_int(SCB_RST,UVM_ALL_ON)
+		`uvm_field_enum(op_delivery_e, op_delivery, UVM_ALL_ON)
 	`uvm_object_utils_end
 
 	function new(string name = "alu_seq_item");
 		super.new(name);
 	endfunction	
-	
-	constraint cmd_operation {if(MODE) 
-															CMD inside {[0:10]};
-														else 
-															CMD inside {[0:13]};}
 
-	/* constraint mode {MODE == 1;} */
-	/* constraint ce {CE == 1;} */
-	/* constraint cmd {CMD == 0;} */
-	constraint inp {INP_VALID == 2'b11;}
 endclass	
