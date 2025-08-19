@@ -153,3 +153,24 @@ class split_test extends test;
 		phase.drop_objection(this);
   endtask
 endclass	
+////////////////////////////////////////////////////////////////////////
+// regress
+
+class regress_test extends test;
+	`uvm_component_utils(regress_test)
+
+	regress seq;
+
+	function new(string name = "regress_test",uvm_component parent = null);
+		super.new(name,parent);
+		seq = regress::type_id::create("seq");
+	endfunction
+
+	virtual task run_phase(uvm_phase phase);
+		phase.raise_objection(this);
+			repeat(2)
+			/* seq = arith::type_id::create("seq"); */
+			seq.start(env.agt.seqr);
+		phase.drop_objection(this);
+  endtask
+endclass	

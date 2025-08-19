@@ -13,6 +13,7 @@ class alu_sequence extends uvm_sequence#(alu_seq_item);
 		wait_for_item_done(); 
 		//get_reponse(req);
 	endtask	
+
 endclass	
 
 ////////////////////////////////////////////////////////////////////////
@@ -30,6 +31,7 @@ class custom extends uvm_sequence#(alu_seq_item);
 	`uvm_do_with(req,{req.MODE == 1;req.CE == 1;req.CMD inside {9,10};req.INP_VALID == 3;req.op_delivery == SINGLE_CYCLE;})
 	`uvm_do_with(req,{req.MODE == 1;req.CE == 0;req.CMD inside {9,10};req.INP_VALID == 3;req.op_delivery == SINGLE_CYCLE;})
   endtask 
+
 endclass
 /////////////////////////////////////////////////////////////
 
@@ -55,6 +57,7 @@ class arith extends uvm_sequence#(alu_seq_item);
 		else req.INP_VALID == 3;
 
 		req.op_delivery == SINGLE_CYCLE; 
+		req.disp_exec == 2; 
 		})
   endtask 
 
@@ -82,6 +85,7 @@ class logical extends uvm_sequence#(alu_seq_item);
 		else req.INP_VALID == 3;
 
 		req.op_delivery == SINGLE_CYCLE;
+		req.disp_exec == 3; 
 		})
   endtask 
 
@@ -125,6 +129,7 @@ class error extends uvm_sequence#(alu_seq_item);
 
 			req.CE == 1;
 			req.op_delivery == SINGLE_CYCLE;
+		req.disp_exec == 4; 
 		})
 	endtask	
 
@@ -181,6 +186,7 @@ class flag extends uvm_sequence#(alu_seq_item);
 
 		req.CE == 1;
 		req.op_delivery == SINGLE_CYCLE;
+		req.disp_exec == 5; 
 			})
 
 	endtask	
@@ -204,6 +210,7 @@ class split_transaction_seq extends uvm_sequence#(alu_seq_item);
 				req.INP_VALID inside {1,2,3};
 				/* if(CMD == 4 || CMD == 5) INP_VALID == 2'b01; else if(CMD == 6 || CMD ==7) INP_VALID ==     2;else INP_VALID == 3; */
 				req.MODE == 1;
+				req.disp_exec == 5; 
 			})
 			
 			`uvm_do_with(req, {
@@ -212,6 +219,7 @@ class split_transaction_seq extends uvm_sequence#(alu_seq_item);
 				req.CMD inside {[0:3]};
 				req.INP_VALID inside {1,2,3};
 				req.MODE == 1;
+				req.disp_exec == 5; 
 			})
 			
 			`uvm_do_with(req, {
@@ -220,7 +228,38 @@ class split_transaction_seq extends uvm_sequence#(alu_seq_item);
 				req.CMD inside {[0:3]};
 				req.INP_VALID inside {1,2,3};
 				req.MODE == 1;
+				req.disp_exec == 5; 
 			})
 	endtask
 
 endclass
+
+///////////////////////////////////////////
+// regress test
+class regress extends uvm_sequence#(alu_seq_item);
+	
+	`uvm_object_utils(regress)
+	
+	arith test1;
+	logical test2;
+	error test3;
+	flag test4;
+	split_transaction_seq test5;
+
+	function new(string name = "regress");
+		super.new(name);
+		test1 = arith::type_id::create("test1");
+		test2 = logical::type_id::create("test1");
+		test3 = error::type_id::create("test1");
+		test4 = flag::type_id::create("test1");
+		test5 = split_transaction_seq::type_id::create("test1");
+	endfunction
+
+	virtual task body();
+		`uvm_do(test1)
+		`uvm_do(test2)
+		`uvm_do(test3)
+		`uvm_do(test4)
+		`uvm_do(test5)
+	endtask	
+endclass	

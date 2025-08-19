@@ -66,6 +66,7 @@ class alu_scoreboard extends uvm_scoreboard;
 	int no = 1;  // no of transactions 
 	int MATCH, MISMATCH;
 	int mismatch_file;
+	/* int exec; */
 
 	virtual alu_intf vif;
 	alu_seq_item mon_packet_q[$];
@@ -340,7 +341,8 @@ class alu_scoreboard extends uvm_scoreboard;
 			if (get_report_verbosity_level() >= UVM_HIGH)
 				$display("\n------------------------------From monitor side -------------------------------------");
 			`uvm_info(get_type_name(),$sformatf("\nOPA:	 %0d \nOPB:   %0d \nMODE:  %0d \nCMD:   %0d \nCE:    %0b \nValid:    %0b \nCIN:    %0b \nRES:   %0d \nERR:    %0b",mon_pkt.OPA, mon_pkt.OPB, mon_pkt.MODE, mon_pkt.CMD,mon_pkt.CE,mon_pkt.INP_VALID,mon_pkt.CIN, mon_pkt.RES, mon_pkt.ERR),UVM_HIGH)
-			
+		
+			/* exec = drv_pkt.disp_exec; */
 			predicted_pkt = predict_model(drv_pkt,previous_val);
 			previous_val = predicted_pkt;
 
@@ -354,6 +356,18 @@ class alu_scoreboard extends uvm_scoreboard;
 	// this part is used to put errors in a separate file
 	function void report_phase(uvm_phase phase);
 		super.report_phase(phase);
+		
+		/* if(exec == 1) */
+		/* 	$display("========================================|| Arithmetic Execution Finished ||========================================"); */
+		/* else if(exec == 2) */
+		/* 	$display("========================================|| Logical Execution Finished ||========================================"); */
+		/* else if(exec == 3) */
+		/* 	$display("========================================|| Error Execution Finished ||========================================"); */
+		/* else if(exec == 4) */
+		/* 	$display("========================================|| flag Execution Finished ||========================================"); */
+		/* else if(exec == 5) */	
+		/* 	$display("========================================|| split Execution Finished ||========================================"); */
+
 		$fclose(mismatch_file);
 	endfunction
 

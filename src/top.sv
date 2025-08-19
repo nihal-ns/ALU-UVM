@@ -62,12 +62,13 @@ module top;
   end
 
   initial begin
-    run_test("custom_test");
+    /* run_test("custom_test"); */
     /* run_test("arith_test"); */
     /* run_test("logical_test"); */
     /* run_test("error_test"); */
     /* run_test("flag_test"); */
     /* run_test("split_test"); */
+    run_test("regress_test");
     #100 $finish;
   end
 endmodule
