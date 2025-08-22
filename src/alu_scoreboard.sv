@@ -1,64 +1,5 @@
-/* `uvm_analysis_imp_decl(_scb) */
-/* `uvm_analysis_imp_decl(_drv) */
-
-/* class alu_scoreboard extends uvm_scoreboard; */
-/* 	`uvm_component_utils(alu_scoreboard) */
-
-/* 	alu_seq_item packet_queue[$]; */
-/* 	alu_seq_item packet_drv[$]; */
-/* 	/1* bit [7:0]smem[4]; *1/ */
-
-/* 	uvm_analysis_imp_scb #(alu_seq_item, alu_scoreboard) item_collected_port; */
-/* 	uvm_analysis_imp_drv #(alu_seq_item, alu_scoreboard) item_drv; */
-
-/* 	function new (string name = "alu_scoreboard", uvm_component parent); */
-/* 		super.new(name,parent); */	
-/* 	endfunction */	
-
-/* 	function void build_phase(uvm_phase phase); */
-/* 		super.build_phase(phase); */
-/* 		item_collected_port = new("item_collected_port",this); */
-/* 		item_drv = new("item_drv",this); */
-/* 	endfunction */	
-
-/* 	virtual function void write_scb(alu_seq_item pkt); */
-/* 		$display("Scoreboard is recieved:: packet"); */
-/* 		packet_queue.push_back(pkt); */
-/* 	endfunction */	
-
-/* 	///// trial */ 
-/* 	virtual function void write_drv(alu_seq_item pac); */
-/* 		$display("Scoreboard is recieved:: packet"); */
-/* 		packet_drv.push_back(pac); */
-/* 	endfunction */	
-
-
-/* 	virtual task run_phase(uvm_phase phase); */
-/* 	alu_seq_item packet_2; */
-/* 	packet_2 = alu_seq_item::type_id::create("packet_2"); */
-/* 		forever begin */
-				
-/* 			wait(packet_queue.size() > 0); */
-/*       $display("!!! entered inside"); */
-/*        /1* packet_2 = packet_queue.pop_front(); *1/ */
-/*        packet_2.copy( packet_queue.pop_front()); */
-/* 			`uvm_info(get_type_name(),$sformatf("OPA: %0d",packet_2.OPA),UVM_LOW) */    
-/* 			`uvm_info(get_type_name(),$sformatf("OPB: %0d",packet_2.OPB),UVM_LOW) */ 
-			
-/* 			`uvm_info(get_type_name(),$sformatf("M: %0b",packet_2.MODE),UVM_LOW) */ 
-/* 			`uvm_info(get_type_name(),$sformatf("CMD: %0d",packet_2.CMD),UVM_LOW) */ 
-/* 			`uvm_info(get_type_name(),$sformatf("RES: %0d",packet_2.RES),UVM_LOW) */ 
-/* 			`uvm_info(get_type_name(),$sformatf("ERR: %0d",packet_2.ERR),UVM_LOW) */ 
-/* 			`uvm_info(get_type_name(),$sformatf("COUT: %0d",packet_2.COUT),UVM_LOW) */ 
-/* 			`uvm_info(get_type_name(),$sformatf("OFLOW: %0d",packet_2.OFLOW),UVM_LOW) */ 
-/* 			`uvm_info(get_type_name(),$sformatf("EGL: %0d%0d%0d",packet_2.E,packet_2.G,packet_2.L),UVM_LOW) */ 
-/* 		end */
-/* 	endtask */	
-/* endclass */	
-
-//////////////////////////////////////////////////////////////////////////////
-`uvm_analysis_imp_decl(_drv)
-`uvm_analysis_imp_decl(_mon)
+`uvm_analysis_imp_decl(_mon_pass)
+`uvm_analysis_imp_decl(_mon_act)
 
 class alu_scoreboard extends uvm_scoreboard;
 	`uvm_component_utils(alu_scoreboard)
@@ -66,14 +7,13 @@ class alu_scoreboard extends uvm_scoreboard;
 	int no = 1;  // no of transactions 
 	int MATCH, MISMATCH;
 	int mismatch_file;
-	/* int exec; */
 
 	virtual alu_intf vif;
-	alu_seq_item mon_packet_q[$];
-	alu_seq_item drv_packet_q[$];
+	alu_seq_item mon_act_packet_q[$];
+	alu_seq_item mon_pass_packet_q[$];
 
-	uvm_analysis_imp_mon #(alu_seq_item, alu_scoreboard) item_collected_port;
-	uvm_analysis_imp_drv #(alu_seq_item, alu_scoreboard) item_drv_port;
+	uvm_analysis_imp_mon_act #(alu_seq_item, alu_scoreboard) item_act_port;
+	uvm_analysis_imp_mon_pass #(alu_seq_item, alu_scoreboard) item_pass_port;
 	
 	function new (string name = "alu_scoreboard", uvm_component parent);
 		super.new(name,parent);
@@ -87,18 +27,18 @@ class alu_scoreboard extends uvm_scoreboard;
 		if(!uvm_config_db#(virtual alu_intf)::get(this," ","vif",vif)) 
 			`uvm_fatal("No_vif in scoreboard","virtual interface get failed from config db"); 
 
-		item_collected_port = new("item_collected_port", this);
-		item_drv_port = new("item_drv_port", this);
+		item_act_port = new("item_act_port", this);
+		item_pass_port = new("item_pass_port", this);
 	endfunction
 
-	virtual function void write_mon(alu_seq_item pkt);
-		`uvm_info(get_type_name(), "Received packet from Monitor", UVM_DEBUG)
-		mon_packet_q.push_back(pkt);
+	virtual function void write_mon_act(alu_seq_item pkt);
+		`uvm_info(get_type_name(), "Received input packet ", UVM_DEBUG)
+		mon_act_packet_q.push_back(pkt);
 	endfunction
 
-	virtual function void write_drv(alu_seq_item pkt);
-		`uvm_info(get_type_name(), "Received packet from Driver", UVM_DEBUG)
-		drv_packet_q.push_back(pkt);
+	virtual function void write_mon_pass(alu_seq_item pkt);
+		`uvm_info(get_type_name(), "Received output packet ", UVM_DEBUG)
+		mon_pass_packet_q.push_back(pkt);
 	endfunction
 
 
@@ -322,31 +262,33 @@ class alu_scoreboard extends uvm_scoreboard;
 	endtask
 
 	virtual task run_phase(uvm_phase phase);
-		alu_seq_item drv_pkt;  // packet coming from driver for refernce model
-		alu_seq_item mon_pkt;  // result packet coming for DUT
+		alu_seq_item mon_act_pkt;  // packet coming from driver for refernce model
+		alu_seq_item mon_pass_pkt;  // result packet coming for DUT
 		alu_seq_item predicted_pkt;  // result packet of reference model
 		alu_seq_item previous_val;  // when ce=0, previous values are supposed be retained, this is meant for reference model
 		previous_val = new();	
 
 		forever begin
-			wait(drv_packet_q.size() > 0 && mon_packet_q.size() > 0);
+			wait(mon_act_packet_q.size() > 0 && mon_pass_packet_q.size() > 0);
 			
-			drv_pkt = drv_packet_q.pop_front();
-			mon_pkt = mon_packet_q.pop_front();
-			
+			mon_act_pkt = mon_act_packet_q.pop_front();
+			mon_pass_pkt = mon_pass_packet_q.pop_front();
+			/* drv_pkt = mon_pkt; */
+
+
 			if (get_report_verbosity_level() >= UVM_HIGH) 
-				$display("\n-------------------------------From driver side -----------------------------------");
-			`uvm_info(get_type_name(),$sformatf("\nOPA:	 %0d \nOPB:   %0d \nMODE:  %0d \nCMD:   %0d \nCE:   %0b \nValid:    %0b \nCIN:    %0b",drv_pkt.OPA, drv_pkt.OPB, drv_pkt.MODE, drv_pkt.CMD,drv_pkt.CE,drv_pkt.INP_VALID, drv_pkt.CIN),UVM_HIGH) 
+				$display("\n-------------------------------inputs -----------------------------------");
+			`uvm_info(get_type_name(),$sformatf("\nOPA:	 %0d \nOPB:   %0d \nMODE:  %0d \nCMD:   %0d \nCE:   %0b \nValid:    %0b \nCIN:    %0b",mon_act_pkt.OPA, mon_act_pkt.OPB, mon_act_pkt.MODE, mon_act_pkt.CMD, mon_act_pkt.CE, mon_act_pkt.INP_VALID, mon_act_pkt.CIN),UVM_HIGH) 
 
 			if (get_report_verbosity_level() >= UVM_HIGH)
-				$display("\n------------------------------From monitor side -------------------------------------");
-			`uvm_info(get_type_name(),$sformatf("\nOPA:	 %0d \nOPB:   %0d \nMODE:  %0d \nCMD:   %0d \nCE:    %0b \nValid:    %0b \nCIN:    %0b \nRES:   %0d \nERR:    %0b",mon_pkt.OPA, mon_pkt.OPB, mon_pkt.MODE, mon_pkt.CMD,mon_pkt.CE,mon_pkt.INP_VALID,mon_pkt.CIN, mon_pkt.RES, mon_pkt.ERR),UVM_HIGH)
+				$display("\n------------------------------outputs-------------------------------------");
+			`uvm_info(get_type_name(),$sformatf("\nRES:   %0d \nERR:    %0b\nCOUT:    %0b\nOFLOW:    %0b\nEGL:    %0b%0b%0b\n",mon_pass_pkt.RES, mon_pass_pkt.ERR, mon_pass_pkt.COUT, mon_pass_pkt.OFLOW, mon_pass_pkt.E, mon_pass_pkt.G, mon_pass_pkt.L),UVM_HIGH)
 		
 			/* exec = drv_pkt.disp_exec; */
-			predicted_pkt = predict_model(drv_pkt,previous_val);
+			predicted_pkt = predict_model(mon_act_pkt,previous_val);
 			previous_val = predicted_pkt;
 
-			compare_and_report(mon_pkt, predicted_pkt, drv_pkt);
+			compare_and_report(mon_pass_pkt, predicted_pkt, mon_act_pkt);
 			$display("======================================Total no of transaction========================================",);
 			$display("============================================== %0d ====================================================",no++);
 			$display("======================================Match of %0d out of %0d==========================================\n",MATCH,(MISMATCH + MATCH));
@@ -356,18 +298,6 @@ class alu_scoreboard extends uvm_scoreboard;
 	// this part is used to put errors in a separate file
 	function void report_phase(uvm_phase phase);
 		super.report_phase(phase);
-		
-		/* if(exec == 1) */
-		/* 	$display("========================================|| Arithmetic Execution Finished ||========================================"); */
-		/* else if(exec == 2) */
-		/* 	$display("========================================|| Logical Execution Finished ||========================================"); */
-		/* else if(exec == 3) */
-		/* 	$display("========================================|| Error Execution Finished ||========================================"); */
-		/* else if(exec == 4) */
-		/* 	$display("========================================|| flag Execution Finished ||========================================"); */
-		/* else if(exec == 5) */	
-		/* 	$display("========================================|| split Execution Finished ||========================================"); */
-
 		$fclose(mismatch_file);
 	endfunction
 

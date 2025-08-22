@@ -2,12 +2,10 @@ class alu_driver extends uvm_driver#(alu_seq_item);
 	`uvm_component_utils(alu_driver)
 
 	virtual alu_intf  vif;
-	uvm_analysis_port #(alu_seq_item) item_collected_port;
 	int count = 0;
 
 	function new(string name = "alu_driver", uvm_component parent);
 		super.new(name,parent);
-		item_collected_port = new("item_collected_port",this);
 	endfunction	
 
 	function void build_phase(uvm_phase phase);
@@ -35,20 +33,9 @@ class alu_driver extends uvm_driver#(alu_seq_item);
 				vif.drv_cb.CIN				<= 0;
 				vif.drv_cb.CE					<= 0;
 				vif.drv_cb.INP_VALID	<= 2'b0;
-
-				req.OPA				<= 0;
-				req.OPB				<= 0;
-				req.MODE			<= 0;
-				req.CMD				<= 0;
-				req.CIN				<= 0;
-				req.CE				<= 0;
-				req.INP_VALID <= 0;
-				req.SCB_RST		<= 1;
-				
 				
 				repeat(1)@(vif.drv_cb);  // remove this (not yet)
 				`uvm_info(get_type_name(),$sformatf("\nDriver Reset: M:%0b |cmd:%0d |valid:%0b |OPA:%0d |OPB:%0d \n",req.MODE, req.CMD, req.INP_VALID, req.OPA, req.OPB),UVM_LOW)
-				item_collected_port.write(req);
 				repeat(3)@(vif.drv_cb);  // remove this (not yet)
 			end
 
@@ -66,7 +53,6 @@ class alu_driver extends uvm_driver#(alu_seq_item);
 
 				`uvm_info(get_type_name(),$sformatf("\nDriver: M:%0b |cmd:%0d |valid:%0b |OPA:%0d |OPB:%0d |CE:%0b\n",req.MODE, req.CMD, req.INP_VALID, req.OPA,   req.OPB, req.CE),UVM_LOW)
 				
-				item_collected_port.write(req);
 				repeat(5)@(vif.drv_cb);  // 3(previous)
 			end
 
@@ -102,10 +88,8 @@ class alu_driver extends uvm_driver#(alu_seq_item);
 				end				
 
 				vif.drv_cb.INP_VALID <= 2'b11; 
-				req.INP_VALID <= 2'b11;	
 
 				`uvm_info(get_type_name(),$sformatf("\nDriver: M:%0b |cmd:%0d |valid:%0b |OPA:%0d |OPB:%0d |CE:%0b |CIN:%0b\n",req.MODE, req.CMD, req.INP_VALID, req.OPA,  req.OPB, req.CE, req.CIN),UVM_LOW)
-				item_collected_port.write(req);
 				repeat(4)@(vif.drv_cb);
 			end
 
@@ -115,19 +99,13 @@ class alu_driver extends uvm_driver#(alu_seq_item);
 				vif.drv_cb.CMD      <= req.CMD;
 				vif.drv_cb.CIN      <= req.CIN;
 				vif.drv_cb.CE       <= req.CE;
-
 				vif.drv_cb.OPA			<= req.OPA;
-				req.OPB	<= 0;							
-				/* req.ERR <= 1; */
 				vif.drv_cb.INP_VALID <= 2'b01;
-				req.INP_VALID <= 2'b01;
 
 				`uvm_info(get_type_name(), "Driver: Intentionally causing a timeout", UVM_LOW)
 				repeat(20) @(vif.drv_cb);
 
-				/* vif.drv_cb.INP_VALID <= 2'b00; */
 				`uvm_info(get_type_name(),$sformatf("\nDriver: M:%0b |cmd:%0d |valid:%0b |OPA:%0d |OPB:%0d |CE:%0b\n",req.MODE, req.CMD, req.INP_VALID, req.OPA,  req.OPB, req.CE),UVM_LOW)
-				item_collected_port.write(req);
 				repeat(1)@(vif.drv_cb); // previous 2
 			end
 		end
