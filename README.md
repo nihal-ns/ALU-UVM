@@ -1,5 +1,5 @@
-
 <img width="922" height="740" alt="image" src="https://github.com/user-attachments/assets/501ce0ac-2391-4c36-8171-610f8c1d96c4" />
+
 
 UVM Verification Environment for a Configurable ALU
 
@@ -59,7 +59,23 @@ Commands:
     make simulate
     # or
     make all
-
+.
+├── design.sv               # The ALU RTL design (DUT)
+├── top.sv                  # Top-level module connecting DUT and Testbench
+├── alu_interface.sv        # Interface for DUT-Testbench connection
+├── alu_pkg.sv              # Package including all testbench components
+├── alu_sequence.sv         # UVM sequences for stimulus generation
+├── alu_driver.sv           # UVM driver
+├── alu_monitor.sv          # UVM monitors (active and passive)
+├── alu_agent.sv            # UVM agents (active and passive)
+├── alu_scoreboard.sv       # UVM scoreboard with predictive model
+├── alu_coverage.sv         # UVM subscriber for functional coverage
+├── alu_env.sv              # Top-level UVM environment
+├── test.sv                 # UVM test classes
+├── defines.sv              # Global definitions and macros
+├── makefile                # Makefile for easy compilation and simulation
+└── docs/
+    └── ALU Verification Plan.docx # Detailed verification plan document
     Run with high verbosity:
 
     make h
@@ -90,41 +106,9 @@ The environment includes several pre-defined tests to target different aspects o
     split_test: Tests the 16-cycle split-operand and timeout functionality.
 
     regress_test: A regression test that runs all the above sequences.
-
-Project Structure
-
-    design.sv: The ALU RTL design (DUT)
-
-    top.sv: Top-level module connecting DUT and Testbench
-
-    alu_interface.sv: Interface for DUT-Testbench connection
-
-    alu_pkg.sv: Package including all testbench components
-
-    alu_sequence.sv: UVM sequences for stimulus generation
-
-    alu_driver.sv: UVM driver
-
-    alu_monitor.sv: UVM monitors (active and passive)
-
-    alu_agent.sv: UVM agents (active and passive)
-
-    alu_scoreboard.sv: UVM scoreboard with predictive model
-
-    alu_coverage.sv: UVM subscriber for functional coverage
-
-    alu_env.sv: Top-level UVM environment
-
-    test.sv: UVM test classes
-
-    defines.sv: Global definitions and macros
-
-    makefile: Makefile for easy compilation and simulation
-
-    docs/
-
-        ALU Verification Plan.docx: Detailed verification plan document                                              
-
+    
+<img width="1482" height="635" alt="image" src="https://github.com/user-attachments/assets/a754b739-c76f-4c87-add5-7a3072433c53" />
+                                       
 Verification Results & Bug Report
 
 The verification process successfully identified several critical bugs in the DUT. A comprehensive bug report detailing these findings can be found in the project documentation. The report covers functional errors, state-dependency issues, and incorrect error handling.
