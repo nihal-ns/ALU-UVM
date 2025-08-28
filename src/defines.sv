@@ -1,7 +1,6 @@
 `ifndef DEFINES_SV  
 `define DEFINES_SV  
 
-/* `define no_trans 5000 */ 
 `define WIDTH 8
 `define CMD_WIDTH 3
 `define POW_2_N $clog2(`WIDTH)

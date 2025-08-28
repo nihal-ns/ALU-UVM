@@ -43,7 +43,6 @@ class custom_test extends test;
 	virtual task run_phase(uvm_phase phase);
 		phase.raise_objection(this);
 			repeat(no)
-			/* seq = arith::type_id::create("seq"); */
 			seq.start(env.agt_act.seqr);
 		phase.drop_objection(this);
   endtask
@@ -64,7 +63,6 @@ class arith_test extends test;
 	virtual task run_phase(uvm_phase phase);
 		phase.raise_objection(this);
 			repeat(10)
-			/* seq = arith::type_id::create("seq"); */
 			seq.start(env.agt_act.seqr);
 		phase.drop_objection(this);
   endtask
@@ -85,7 +83,6 @@ class logical_test extends test;
 	virtual task run_phase(uvm_phase phase);
 		phase.raise_objection(this);
 			repeat(10)
-			/* seq = arith::type_id::create("seq"); */
 			seq.start(env.agt_act.seqr);
 		phase.drop_objection(this);
   endtask
@@ -106,7 +103,6 @@ class error_test extends test;
 	virtual task run_phase(uvm_phase phase);
 		phase.raise_objection(this);
 			repeat(10)
-			/* seq = arith::type_id::create("seq"); */
 			seq.start(env.agt_act.seqr);
 		phase.drop_objection(this);
   endtask
@@ -127,7 +123,6 @@ class flag_test extends test;
 	virtual task run_phase(uvm_phase phase);
 		phase.raise_objection(this);
 			repeat(10)
-			/* seq = arith::type_id::create("seq"); */
 			seq.start(env.agt_act.seqr);
 		phase.drop_objection(this);
   endtask
@@ -148,7 +143,6 @@ class split_test extends test;
 	virtual task run_phase(uvm_phase phase);
 		phase.raise_objection(this);
 			repeat(10)
-			/* seq = arith::type_id::create("seq"); */
 			seq.start(env.agt_act.seqr);
 		phase.drop_objection(this);
   endtask
@@ -168,8 +162,7 @@ class regress_test extends test;
 
 	virtual task run_phase(uvm_phase phase);
 		phase.raise_objection(this);
-			repeat(1)
-			/* seq = arith::type_id::create("seq"); */
+			repeat(2)
 			seq.start(env.agt_act.seqr);
 		phase.drop_objection(this);
   endtask

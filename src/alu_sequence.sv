@@ -28,16 +28,30 @@ class custom extends uvm_sequence#(alu_seq_item);
 	virtual task body();
 	/* `uvm_do_with(req,{req.MODE == 1;req.CE == 1;req.CMD inside {[0:3]};req.INP_VALID == 3;}) */
 	/* `uvm_do_with(req,{req.MODE == 1;req.CE == 1;req.CMD inside {[0:3],8,9,10};req.INP_VALID == 3;}) */
-	/* `uvm_do_with(req,{req.MODE == 1;req.CE == 1;req.CMD inside {9,10};req.INP_VALID == 3;req.op_delivery == SINGLE_CYCLE;}) */
-	/* `uvm_do_with(req,{req.MODE == 1;req.CE == 0;req.CMD inside {9,10};req.INP_VALID == 3;req.op_delivery == SINGLE_CYCLE;}) */
-	`uvm_do_with(req,{req.MODE == 1;req.CE == 1;req.CMD inside {[4:7]};
-		if(req.CMD == 4 || req.CMD == 5) 
-			req.INP_VALID == 2'b01; 
-		else if(req.CMD == 6 || req.CMD ==7) 
-			req.INP_VALID == 2; 
-		else req.INP_VALID == 3;
+	/* `uvm_do_with(req,{req.MODE == 1;req.CE == 1;req.CMD inside {9,10};req.INP_VALID == 3;}) */
+	/* `uvm_do_with(req,{req.MODE == 0;req.CE == 1;req.CMD inside {6,8,9}; */
+	/* 	if(req.CMD == 6 || req.CMD == 8 || req.CMD == 9) */
+	/* 		req.INP_VALID == 1; */
+	/* 	else */
+	/* 		req.INP_VALID == 2;}) */
 
-		req.op_delivery == SINGLE_CYCLE;})
+	/* `uvm_do_with(req,{req.MODE == 0;req.CE == 1;req.CMD inside {7,10,11}; */
+	/* 	if(req.CMD == 6 || req.CMD == 8 || req.CMD == 9) */
+	/* 		req.INP_VALID == 1; */
+	/* 	else */
+	/* 		req.INP_VALID == 2;}) */
+
+	`uvm_do_with(req,{req.MODE == 1;req.CE == 1;req.CMD inside {4,5};
+		if(req.CMD == 4 || req.CMD == 5)
+			req.INP_VALID == 1;
+		else
+			req.INP_VALID == 2;})
+
+	/* `uvm_do_with(req,{req.MODE == 1;req.CE == 1;req.CMD inside {6,7}; */
+	/* 	if(req.CMD == 4 || req.CMD == 5) */
+	/* 		req.INP_VALID == 1; */
+	/* 	else */
+	/* 		req.INP_VALID == 2;}) */
   endtask 
 
 endclass
@@ -48,25 +62,31 @@ endclass
 class arith extends uvm_sequence#(alu_seq_item);
 	`uvm_object_utils(arith)
 
+	int cmp_op;
+	function int pick_cmp_relation();
+	  return $urandom_range(1, 5); 
+	endfunction
+
 	function new(string name = "arith");
 		super.new(name);
 	endfunction
 
 	virtual task body();
+	cmp_op = pick_cmp_relation();
 	`uvm_do_with(req, {
 		req.MODE == 1;
 		req.CE == 1;
 		req.CMD inside {[0:10]};
 
 		if(req.CMD == 4 || req.CMD == 5) 
-			req.INP_VALID == 2'b01; 
+			req.INP_VALID == 1; 
 		else if(req.CMD == 6 || req.CMD ==7) 
 			req.INP_VALID == 2; 
 		else req.INP_VALID == 3;
-
-		req.op_delivery == SINGLE_CYCLE; 
+		
+		if(cmp_op == 1 && req.CMD == 8) // just to increase the probability for opa == opb 
+			req.OPA == req.OPB;
 		})
-/* `uvm_do_with(req,{req.MODE == 1;req.CE == 1;req.CMD inside {[0:3]};req.INP_VALID == 3;req.op_delivery == SINGLE_CYCLE;}) */
   endtask 
 
 endclass	
@@ -90,9 +110,8 @@ class logical extends uvm_sequence#(alu_seq_item);
 			req.INP_VALID == 2'b01; 
 		else if(req.CMD == 7 || req.CMD == 10 || req.CMD == 11) 
 			req.INP_VALID == 2; 
-		else req.INP_VALID == 3;
-
-		req.op_delivery == SINGLE_CYCLE;
+		else 
+			req.INP_VALID == 3;
 		})
   endtask 
 
@@ -121,11 +140,9 @@ class error extends uvm_sequence#(alu_seq_item);
 				req.INP_VALID == 2'b00;
 
 			req.CE == 1;
-			req.op_delivery == SINGLE_CYCLE;
 		})
 		`uvm_do_with(req, {
 		req.CE == 1;
-		req.op_delivery == SINGLE_CYCLE;
 		req.MODE == 0;
 		req.CMD inside {[6:11],[14:15]};
 
@@ -189,9 +206,8 @@ class flag extends uvm_sequence#(alu_seq_item);
 				else
 					req.OPB > 4'b1111;}
 
-		req.CE == 1;
-		req.op_delivery == SINGLE_CYCLE;
-			})
+		/* req.CE == 1; */
+		})
 
 	endtask	
 endclass	
@@ -206,30 +222,14 @@ class split_transaction_seq extends uvm_sequence#(alu_seq_item);
 	endfunction
 
 	virtual task body();
-
-			`uvm_do_with(req, {
-				req.CE == 1;
-				req.op_delivery == SPLIT_OPA_FIRST;  //SINGLE_CYCLE;
-				req.CMD inside {[0:3]};
-				req.INP_VALID inside {1,2,3};
-				/* if(CMD == 4 || CMD == 5) INP_VALID == 2'b01; else if(CMD == 6 || CMD ==7) INP_VALID ==     2;else INP_VALID == 3; */
-				req.MODE == 1;
-			})
 			
 			`uvm_do_with(req, {
 				req.CE == 1;
-				req.op_delivery == SPLIT_OPB_FIRST;  //SINGLE_CYCLE;
-				req.CMD inside {[0:3]};
 				req.INP_VALID inside {1,2,3};
-				req.MODE == 1;
-			})
-			
-			`uvm_do_with(req, {
-				req.CE == 1;
-				req.op_delivery == SPLIT_TIMEOUT;
-				req.CMD inside {[0:3]};
-				req.INP_VALID inside {1,2,3};
-				req.MODE == 1;
+				if(req.MODE)
+					req.CMD inside {[0:3],[8:10]};
+				else
+					req.CMD inside {[0:5],12,13};
 			})
 	endtask
 

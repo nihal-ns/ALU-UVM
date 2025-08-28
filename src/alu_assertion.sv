@@ -25,7 +25,7 @@ program alu_assertion(clk,rst,CE,MODE,CMD,INP_VALID,OPA,OPB,CIN,RES,ERR,COUT,OFL
 										else
 											$error("Inputs are unknown %d %d %d %d %d %d %d %d %d",clk,rst,CE,MODE,CMD,INP_VALID,OPA,OPB,CIN);
 
-	rst_assert: assert property(@(posedge clk) ##4 !rst)  // added 4 clock delay for assertion pass
+	rst_assert: assert property(@(posedge clk) !rst)  // added 4 clock delay for assertion pass
 											/* $info("pass"); */
 										else
 											$info("Reset is asserted");

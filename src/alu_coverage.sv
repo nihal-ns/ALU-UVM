@@ -4,7 +4,6 @@ class alu_coverage extends uvm_subscriber#(alu_seq_item);
 	`uvm_component_utils(alu_coverage)
   
 	uvm_analysis_imp_mon_act_cg#(alu_seq_item, alu_coverage) mon_act_cg_port;
-  /* uvm_analysis_imp_drv_cg #(alu_seq_item, alu_coverage) drv_cg_port; */
 
 	alu_seq_item mon_pass_seq, mon_act_seq;
 	real mon_act_cov, mon_pass_cov;
@@ -66,16 +65,8 @@ class alu_coverage extends uvm_subscriber#(alu_seq_item);
       bins rol = {`ROL_A_B};
       bins ror = {`ROR_A_B};
 			}
-		/* CMDVector: coverpoint mon_act_seq.CMD iff(!rst && mon_act_seq.CE) */
-		/* 	{ */
-		/* 		bins arithmetic_bin[] = {[0:10]} iff (mon_act_seq.MODE == 1);      // using "with" instead of "iff" gives some error/warning */
-		/* 		bins logical[] = {[0:13]} iff (mon_act_seq.MODE == 0); */
-        /* bins out_of_range_arithetic = {[11:15]} iff (mon_act_seq.MODE == 1'b1); */
-        /* bins out_of_range_logical = {14,15} iff (mon_act_seq.MODE == 1'b0); */
-		/* 	} */
 		Cross_ModexCmdxarith: cross MBit, CMDVector_Arith;
 		Cross_ModexCmdxlogic: cross MBit, CMDVector_Logic;
-	/* CrossCMDxInValid: cross CMDVector, InValVector; */
 	endgroup
 
 // Output coverage from monitor
@@ -94,15 +85,15 @@ class alu_coverage extends uvm_subscriber#(alu_seq_item);
 			}
 		Cmp_E: coverpoint mon_pass_seq.E iff(mon_act_seq.MODE == 1 && mon_act_seq.CMD == 8) {
 			bins equal_to = {1};
-			/* bins not_equal = {0}; */
+			bins not_equal = {0};
 			}
 		Cmp_G: coverpoint mon_pass_seq.G iff(mon_act_seq.MODE == 1 && mon_act_seq.CMD == 8) {
 			bins greater = {1};
-			/* bins not_greater = {0}; */
+			bins not_greater = {0};
 			}
 		Cmp_L: coverpoint mon_pass_seq.L iff(mon_act_seq.MODE == 1 && mon_act_seq.CMD == 8) {
 			bins less = {1};
-			/* bins not_less = {0}; */
+			bins not_less = {0};
 			}
 	endgroup
 
@@ -114,20 +105,17 @@ class alu_coverage extends uvm_subscriber#(alu_seq_item);
   
 	function void build_phase(uvm_phase phase);
 		super.build_phase(phase);
-		/* drv_cg_port = new("drv_cg_port", this); */
 		mon_act_cg_port = new("mon_act_cg_port", this);
 	endfunction	
 
 	function void write(alu_seq_item t);
 		mon_pass_seq = t;
 		alu_out_cvg.sample();
-		/* `uvm_info(get_type_name, $sformatf("[DRIVER]  ", txn_drv1.), UVM_MEDIUM); */
 	endfunction
 
 	function void write_mon_act_cg(alu_seq_item t);
 		mon_act_seq = t;
 		alu_in_cvg.sample();
-		/* `uvm_info(get_type_name, $sformatf("[MONITOR]  ", txn_mon1.), UVM_MEDIUM); */
 	endfunction
 
 	function void extract_phase(uvm_phase phase);
@@ -143,4 +131,3 @@ class alu_coverage extends uvm_subscriber#(alu_seq_item);
 	endfunction
 
 endclass
-
