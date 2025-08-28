@@ -1,35 +1,3 @@
-## Makefile for SystemVerilog Simulation (Silent Version)
-##
-## --- Variables ---
-#FILE ?= top.sv
-
-## --- Auto-Detection Logic ---
-#ifeq ($(TOP),)
-#  TOP := top
-#endif
-
-## --- Sanity Check ---
-#ifeq ($(TOP),)
-#  $(error Could not automatically find a 'module' definition in $(FILE). Please specify it manually with TOP=<module_name>)
-#endif
-
-## --- Targets ---
-#all: simulate
-
-## The '@' symbol already prevents the command itself from being printed.
-## We have removed the extra "@echo" lines for a cleaner output.
-#compile:
-#	@vlog -sv $(FILE)
-
-##@vsim -c $(TOP) +UVM_VERBOSITY=UVM_HIGH -do "run -all ; quit"
-#simulate: compile
-#	@vsim -c $(TOP) +UVM_VERBOSITY=UVM_HIGH -do "run -all ; quit"
-
-#clean:
-#	@rm -rf transcript vsim.wlf work *.log
-
-#.PHONY: all compile simulate clean
-
 ### ----------------------------------------------------------------------
 # Makefile for SystemVerilog Simulation
 
