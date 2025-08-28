@@ -1,4 +1,4 @@
-<img width="1609" height="737" alt="image" src="https://github.com/user-attachments/assets/79c5df7c-dc33-425c-afef-ac546c12029e" /># ALU-UVM
+
 <img width="922" height="740" alt="image" src="https://github.com/user-attachments/assets/501ce0ac-2391-4c36-8171-610f8c1d96c4" />
 
 UVM Verification Environment for a Configurable ALU
