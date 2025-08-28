@@ -92,8 +92,9 @@ The environment includes several pre-defined tests to target different aspects o
 
     regress_test: A regression test that runs all the above sequences.
     
-<img width="1482" height="635" alt="image" src="https://github.com/user-attachments/assets/a754b739-c76f-4c87-add5-7a3072433c53" />
-                                       
+Project Structure
+<img width="1498" height="664" alt="image" src="https://github.com/user-attachments/assets/8a4fe548-d3e2-4873-a01c-4c060a4b769b" />
+  
 Verification Results & Bug Report
 
 The verification process successfully identified several critical bugs in the DUT. A comprehensive bug report detailing these findings can be found in the project documentation. The report covers functional errors, state-dependency issues, and incorrect error handling.
