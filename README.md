@@ -93,7 +93,7 @@ The environment includes several pre-defined tests to target different aspects o
 
 Project Structure
 
-ALU-UVM/
+ALU-UVM/                                                                                                                
 ├── design.sv               # The ALU RTL design (DUT)                                                                  
 ├── top.sv                  # Top-level module connecting DUT and Testbench                                            
 ├── alu_interface.sv        # Interface for DUT-Testbench connection                                                    
