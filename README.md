@@ -1,4 +1,4 @@
-# ALU-UVM
+<img width="1609" height="737" alt="image" src="https://github.com/user-attachments/assets/79c5df7c-dc33-425c-afef-ac546c12029e" /># ALU-UVM
 <img width="922" height="740" alt="image" src="https://github.com/user-attachments/assets/501ce0ac-2391-4c36-8171-610f8c1d96c4" />
 
 UVM Verification Environment for a Configurable ALU
@@ -94,20 +94,20 @@ The environment includes several pre-defined tests to target different aspects o
 Project Structure
 
 ALU-UVM/                                                                                                                
-├── design.sv               # The ALU RTL design (DUT)                                                                  
-├── top.sv                  # Top-level module connecting DUT and Testbench                                            
-├── alu_interface.sv        # Interface for DUT-Testbench connection                                                    
-├── alu_pkg.sv              # Package including all testbench components                                                
-├── alu_sequence.sv         # UVM sequences for stimulus generation
-├── alu_driver.sv           # UVM driver                                                                                
-├── alu_monitor.sv          # UVM monitors (active and passive)                                                         
-├── alu_agent.sv            # UVM agents (active and passive)                                                           
-├── alu_scoreboard.sv       # UVM scoreboard with predictive model                                                      
-├── alu_coverage.sv         # UVM subscriber for functional coverage                                                    
-├── alu_env.sv              # Top-level UVM environment                                                                 
-├── test.sv                 # UVM test classes                                                                          
-├── defines.sv              # Global definitions and macros                                                             
-├── makefile                # Makefile for easy compilation and simulation                                              
+├── design.sv                # The ALU RTL design (DUT)                                                                 
+├── top.sv                   # Top-level module connecting DUT and Testbench                                            
+├── alu_interface.sv         # Interface for DUT-Testbench connection                                                   
+├── alu_pkg.sv               # Package including all testbench components                                               
+├── alu_sequence.sv          # UVM sequences for stimulus generation                                                    
+├── alu_driver.sv            # UVM driver                                                                               
+├── alu_monitor.sv           # UVM monitors (active and passive)                                                        
+├── alu_agent.sv             # UVM agents (active and passive)                                                          
+├── alu_scoreboard.sv        # UVM scoreboard with predictive model                                                     
+├── alu_coverage.sv          # UVM subscriber for functional coverage                                                   
+├── alu_env.sv               # Top-level UVM environment                                                                
+├── test.sv                  # UVM test classes                                                                         
+├── defines.sv               # Global definitions and macros                                                            
+├── makefile                 # Makefile for easy compilation and simulation                                             
 └── docs/                                                                                                               
     └── ALU Verification Plan.docx # Detailed verification plan document                                                
 
