@@ -1,3 +1,2 @@
 # ALU-UVm
-<img width="1000" height="793" alt="image" src="https://github.com/user-attachments/assets/824c07ca-5f6f-43d8-b158-0145856ff1ec" />
-
+<img width="922" height="740" alt="image" src="https://github.com/user-attachments/assets/501ce0ac-2391-4c36-8171-610f8c1d96c4" />
